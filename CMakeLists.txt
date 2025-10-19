@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(${PROJECT_NAME}_STANDALONE_PACKAGE "Create standalone package" OFF)
+option(${PROJECT_NAME}_BUILD_EXAMPLES "Build example binaries" OFF)
+option(${PROJECT_NAME}_BUILD_TESTING "Build unit tests" OFF)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
@@ -13,6 +17,10 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 endif()
 
 add_subdirectory(src)
+if(BUILD_TESTING AND ${PROJECT_NAME}_BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
+
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
@@ -27,19 +35,16 @@ write_basic_package_version_file(
 
 install(
   FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${CMAKE_PROJECT_NAME}Config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${CMAKE_PROJECT_NAME}ConfigVersion.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME})
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}Config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
-option(STANDALONE_PACKAGE "Create standalone package" OFF)
-option(${CMAKE_PROJECT_NAME}_BUILD_EXAMPLES "Build example binaries" OFF)
-option(${CMAKE_PROJECT_NAME}_BUILD_TESTING "Build unit tests" OFF)
-if(STANDALONE_PACKAGE)
+if(${PROJECT_NAME}_STANDALONE_PACKAGE)
   install(
     CODE "if(NOT DEFINED CPACK_TEMPORARY_INSTALL_DIRECTORY)\nexecute_process(COMMAND ${CMAKE_COMMAND} -DROOT_DIR=${CMAKE_INSTALL_PREFIX} -P ${CMAKE_SOURCE_DIR}/cmake/DepCollect.cmake)\nendif()"
   )
 endif()
-set(PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
+set(PACKAGE_NAME "${PROJECT_NAME}")
 set(CPACK_GENERATOR "TGZ;DEB;RPM")
 set(PACKAGE_INSTALL_DIRECTORY "/opt/${PACKAGE_NAME}")
 set(CPACK_PACKAGE_NAME ${PACKAGE_NAME})
@@ -56,7 +61,7 @@ set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64)
 
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER
     "Vasyl Zaichenko <vasyl.v.zaichenko@gmail.com>")
-if(STANDALONE_PACKAGE)
+if(${PROJECT_NAME}_STANDALONE_PACKAGE)
   set(CPACK_RPM_PACKAGE_RELOCATABLE ON)
   set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_SOURCE_DIR}/cmake/DepCollect.cmake")
 else()

@@ -1,22 +1,24 @@
 cmake_minimum_required(VERSION 3.31)
 include(ExportHelper)
 
-file(GLOB MOD_SRC "*.cxx")
+file(GLOB LIB_SRC "*.cpp")
 
 find_package(Threads REQUIRED)
-# find_package(Boost CONFIG REQUIRED COMPONENTS headers)
-# find_package(OpenSSL REQUIRED SSL Crypto)
+find_package(Boost CONFIG REQUIRED COMPONENTS headers url)
+find_package(OpenSSL REQUIRED SSL Crypto)
 
 add_library(${PROJECT_NAME} SHARED)
 
-target_sources(${PROJECT_NAME} PRIVATE ${MOD_SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${LIB_SRC})
 install(TARGETS ${PROJECT_NAME})
 
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE Threads::Threads)
+  ${PROJECT_NAME} PRIVATE
+        Threads::Threads
+        Boost::headers
+        Boost::url
+        OpenSSL::SSL
+        OpenSSL::Crypto)
 
 add_exported_target(${PROJECT_NAME} SUPPORTED_COMPONENTS)
 
-if(BUILD_TESTING AND ${CMAKE_PROJECT_NAME}_BUILD_TESTING)
-  add_subdirectory(tests)
-endif()

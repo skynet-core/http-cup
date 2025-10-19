@@ -16,8 +16,7 @@
                 "CMAKE_CXX_STANDARD": "23",
                 "CMAKE_CXX_STANDARD_REQUIRED": "ON",
                 "CMAKE_CXX_EXTENSIONS": "OFF",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-                "cuphttp_BUILD_TESTING": "ON"
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             },
             "vendor": {
                 "qt.io/QtCreator/1.0": {
@@ -32,20 +31,33 @@
             }
         },
         {
-            "name": "debug-darwin",
-            "inherits": [
-                "common"
-            ],
+            "name": "homebrew-darwin",
+            "hidden": true,
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/opt/homebrew/opt/llvm/bin/clang",
-                "CMAKE_CXX_COMPILER": "/opt/homebrew/opt/llvm/bin/clang++",
-                "CMAKE_LINKER_TYPE": "LLD",
-                "CMAKE_PREFIX_PATH": "/opt/homebrew/lib/cmake",
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_C_COMPILER": "$env{HOMEBREW_PREFIX}/opt/llvm/bin/clang",
+                "CMAKE_CXX_COMPILER": "$env{HOMEBREW_PREFIX}/opt/llvm/bin/clang++",
+                "CMAKE_PREFIX_PATH": "$env{HOMEBREW_PREFIX}/lib/cmake"
             },
             "environment": {
-                "SDKROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
-                "LD_LIBRARY_PATH": "/opt/homebrew/opt/llvm/lib:/opt/homebrew/opt/boost/lib:/opt/homebrew/openssl@3/lib"
+                "LD_LIBRARY_PATH": "$env{HOMEBREW_PREFIX}/opt/llvm/lib:$env{HOMEBREW_PREFIX}/opt/boost/lib:$env{HOMEBREW_PREFIX}/opt/openssl@3/lib"
+            }
+        },
+        {
+            "name": "darwin-sdk",
+            "hidden": true,
+            "environment": {
+                "SDKROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+            }
+        },
+        {
+            "name": "debug-darwin",
+            "inherits": [
+                "common",
+                "darwin-sdk"
+            ],
+            "cacheVariables": {
+                "CMAKE_LINKER_TYPE": "LLD",
+                "CMAKE_BUILD_TYPE": "Debug"
             },
             "condition": {
                 "type": "equals",
@@ -54,19 +66,29 @@
             }
         },
         {
-            "name": "debug-linux",
+            "name": "debug-darwin-homebrew",
             "inherits": [
-                "common"
+                "common",
+                "darwin-sdk",
+                "homebrew-darwin"
             ],
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_LINKER_TYPE": "LLD",
                 "CMAKE_BUILD_TYPE": "Debug"
             },
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
-                "rhs": "Linux"
+                "rhs": "Darwin"
+            }
+        },
+        {
+            "name": "debug",
+            "inherits": [
+                "common"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         }
     ],
@@ -76,8 +98,12 @@
             "configurePreset": "debug-darwin"
         },
         {
-            "name": "debug-linux",
-            "configurePreset": "debug-linux"
+            "name": "debug-darwin-homebrew",
+            "configurePreset": "debug-darwin-homebrew"
+        },
+        {
+            "name": "debug",
+            "configurePreset": "debug"
         }
     ]
 }
