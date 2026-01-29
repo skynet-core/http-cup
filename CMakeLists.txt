@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 4.1)
 
 project(cuphttp VERSION 1.0.0)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -18,7 +18,7 @@ endif()
 
 add_subdirectory(src)
 if(BUILD_TESTING AND ${PROJECT_NAME}_BUILD_TESTING)
-  add_subdirectory(tests)
+    add_subdirectory(tests)
 endif()
 
 
@@ -40,7 +40,7 @@ install(
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 if(${PROJECT_NAME}_STANDALONE_PACKAGE)
-  install(
+    install(
     CODE "if(NOT DEFINED CPACK_TEMPORARY_INSTALL_DIRECTORY)\nexecute_process(COMMAND ${CMAKE_COMMAND} -DROOT_DIR=${CMAKE_INSTALL_PREFIX} -P ${CMAKE_SOURCE_DIR}/cmake/DepCollect.cmake)\nendif()"
   )
 endif()
@@ -62,15 +62,15 @@ set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER
     "Vasyl Zaichenko <vasyl.v.zaichenko@gmail.com>")
 if(${PROJECT_NAME}_STANDALONE_PACKAGE)
-  set(CPACK_RPM_PACKAGE_RELOCATABLE ON)
-  set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_SOURCE_DIR}/cmake/DepCollect.cmake")
+    set(CPACK_RPM_PACKAGE_RELOCATABLE ON)
+    set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_SOURCE_DIR}/cmake/DepCollect.cmake")
 else()
-  set(CPACK_RPM_PACKAGE_AUTOREQ ON)
-  set(CPACK_RPM_PACKAGE_REQUIRES "glibc libstdc++")
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS libc6 libstdc++6)
-  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
-  set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)
-  set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_SOURCE_DIR}/cmake/FixLoader.cmake")
+    set(CPACK_RPM_PACKAGE_AUTOREQ ON)
+    set(CPACK_RPM_PACKAGE_REQUIRES "glibc libstdc++")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS libc6 libstdc++6)
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS ON)
+    set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_SOURCE_DIR}/cmake/FixLoader.cmake")
 endif()
 
 include(CPack)

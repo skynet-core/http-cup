@@ -19,4 +19,4 @@ else
 	fi
 fi
 
-./setup.sh "$(realpath ../)"
+# ./setup.sh "$(realpath ../)"

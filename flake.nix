@@ -2,7 +2,7 @@
   description = "HTTP Client Library | CUP - C (++) Ultimate Package manager";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2505.810395";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2511.906709";
     flake-utils.url = "github:numtide/flake-utils";
   };
   outputs =
@@ -20,7 +20,7 @@
         };
         lib = pkgs.lib;
         fs = lib.fileset;
-        llvm = pkgs.llvmPackages_20;
+        llvm = pkgs.llvmPackages;
         gccStdenv = pkgs.gcc15Stdenv;
         llvmStdenv = llvm.stdenv;
         src = fs.toSource {
@@ -91,7 +91,7 @@
           inherit buildInputs;
           nativeBuildInputs = commonNativePackages ++ [ ];
           cmakeFlags = [
-            "-DCMAKE_CXX_STANDARD=23"
+            "-DCMAKE_CXX_STANDARD=26"
             "-DCMAKE_CXX_EXTENSIONS=OFF"
             "-DCMAKE_CXX_STANDARD_REQUIRED=ON"
             "-DCUP_STANDALONE_PACKAGE=OFF"
